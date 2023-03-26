@@ -1,0 +1,82 @@
+formatter: "markdown table"
+
+version: ""
+
+header-from: tf-network.tf
+footer-from: ""
+
+recursive:
+  enabled: false
+  path: modules
+
+sections:
+  hide: []
+  show:
+  - header
+  - requirements
+  - resources
+  - providers
+  - modules
+  - inputs
+  - outputs
+
+content: |-
+  # README #
+
+  {{ .Header }}
+
+  Some more information can go here.
+
+  ## Documentation
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Modules }}
+
+  {{ .Resources }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+  ## Contribute
+
+  {{ include "CONTRIBUTE.md" }}
+
+  ## Changelog
+  Check here the [CHANGELOG](CHANGELOG.md)
+
+
+output:
+  file: "README.md"
+  mode: replace
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+output-values:
+  enabled: false
+  from: ""
+
+sort:
+  enabled: true
+  by: required
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: true
+  html: true
+  indent: 3
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true
+
