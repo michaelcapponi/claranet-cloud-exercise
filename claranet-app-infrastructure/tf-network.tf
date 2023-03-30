@@ -3,6 +3,7 @@
 *
 * **Version**: 1.0
 * Terraform network resources 
+* Terraform added application (alb + asg) and db resources
 */
 
 terraform {
