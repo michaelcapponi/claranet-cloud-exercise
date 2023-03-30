@@ -1,0 +1,27 @@
+version: 0.2
+env:
+  variables:
+    TERRAFORM_VERSION: 1.3.9
+phases:
+  install:
+    commands:
+      - echo "Installing terraform..."
+      - cd /usr/bin
+      - curl -O https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - terraform --version
+      - echo "Completed installing terraform..."
+  build:
+    commands:
+      - cd claranet-app-infrastructure
+      - echo "Terraform apply"
+      - cd "${CODEBUILD_SRC_DIR}"
+      - cd claranet-app-infrastructure
+      - ls -l
+      - echo "terraform init"
+      #- terraform init
+      #- terraform apply -auto-approve "tfplan" -compact-warnings
+      #- terraform destroy
+  post_build:
+    commands:
+      - echo "[Post Build]:Completed terraform apply..."

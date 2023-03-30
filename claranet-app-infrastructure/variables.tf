@@ -83,16 +83,6 @@ variable "db_sg_name" {
   default = "db-sg"
 }
 
-variable "db_sg_desc" {
-  type = string
-  default = "Allow inbound traffic from EC2"
-}
-
-variable "alarm_name" {
-  type = string
-  default = "asg-ec2-cpu-gt-th"
-}
-
 variable "cpu_percentage_th" {
   type = string
   default = "70"
@@ -110,7 +100,7 @@ variable "sns_topic_name" {
   default = "breaching"
   description = "phoenix-alarms-sns"
 }
-
+#tflint-ignore: terraform_unused_declarations
 variable "support_email" {
   type = string
   default = "devteam@devteamdomain.com"
