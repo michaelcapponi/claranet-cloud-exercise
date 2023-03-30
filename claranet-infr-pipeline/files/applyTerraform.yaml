@@ -15,6 +15,7 @@ phases:
     commands:
       - echo "Terraform apply"
       - cd "${CODEBUILD_SRC_DIR}"
+      - cd claranet-app-infrastructure
       - ls -l
       - echo "terraform init"
       - terraform init
