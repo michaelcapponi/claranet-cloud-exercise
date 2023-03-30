@@ -21,7 +21,7 @@ resource "aws_security_group" "db_sg" {
     from_port   = 27017
     to_port     = 27017
     protocol    = "tcp"
-    cidr_blocks = aws_subnet.private_subnet.*.cidr_block
+    cidr_blocks = aws_subnet.private_subnet[*].cidr_block
   }
   egress {
     from_port        = 0
@@ -33,7 +33,7 @@ resource "aws_security_group" "db_sg" {
 
 resource "aws_docdb_subnet_group" "db_subnet_grp" {
   name       = var.db_subnet_grp_name
-  subnet_ids = aws_subnet.private_subnet.*.id
+  subnet_ids = aws_subnet.private_subnet[*].id
 }
 
 

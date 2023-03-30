@@ -8,17 +8,19 @@ resource "aws_security_group" "alb_sg" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
   }
+  
 }
 
 resource "aws_lb" "alb" {
   name = var.alb_name
-  subnets = aws_subnet.public_subnet.*.id
+  subnets = aws_subnet.public_subnet[*].id
   security_groups = [aws_security_group.alb_sg.id]
 }
 
@@ -70,11 +72,11 @@ resource "aws_launch_template" "lt" {
   image_id = var.ec2_ami
   instance_type = var.ec2_type
   vpc_security_group_ids = [aws_security_group.lt_sg.id]
-  user_data = "${base64encode(templatefile("./user-data.sh", {
+  user_data = base64encode(templatefile("./user-data.sh", {
     db_name = var.master_dba
     db_pwd = aws_secretsmanager_secret_version.db_pwd_secret_version.secret_string
     db_endpoint = aws_docdb_cluster.db_cluster.endpoint
-  }))}"
+  }))
   key_name = "test"
 }
 
@@ -84,7 +86,7 @@ resource "aws_autoscaling_group" "asg" {
     id = aws_launch_template.lt.id
     version = "$Latest"
   }
-  vpc_zone_identifier = aws_subnet.private_subnet.*.id
+  vpc_zone_identifier = aws_subnet.private_subnet[*].id
   target_group_arns = [aws_lb_target_group.alb_tg.arn]
   min_size = 1
   max_size = 2
