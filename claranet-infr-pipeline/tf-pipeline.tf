@@ -154,59 +154,59 @@ resource "aws_codepipeline" "aws_automation" {
       }
     }
   }
-  #stage {
-  #  name = "Validate"
-  #  action {
-  #    name             = "Validate"
-  #    category         = "Build"
-  #    owner            = "AWS"
-  #    provider         = "CodeBuild"
-  #    version          = "1"
-  #    input_artifacts  = ["source"]
-  #    output_artifacts = ["validate"]
-  #    namespace        = "VALIDATE"
-  #    configuration = {
-  #      ProjectName = aws_codebuild_project.validate.name
-  #    }
-  #  }
-  #}
-  #stage {
-  #  name = "TestCheckov"
-  #  action {
-  #    name             = "TestCheckov"
-  #    category         = "Build"
-  #    owner            = "AWS"
-  #    provider         = "CodeBuild"
-  #    version          = "1"
-  #    run_order        = 1
-  #    input_artifacts  = ["source"]
-  #    output_artifacts = ["checkov"]
-  #    namespace        = "CHECKOV"
-  #    configuration = {
-  #      ProjectName = aws_codebuild_project.checkov_test.name
-  #      EnvironmentVariables = jsonencode([
-  #        {
-  #          name  = "ACCOUNT"
-  #          value = local.account
-  #          type  = "PLAINTEXT"
-  #        }
-  #      ])
-  #    }
-  #  }
-  #  #action {
-  #  #  name      = "CheckovApproval"
-  #  #  category  = "Approval"
-  #  #  owner     = "AWS"
-  #  #  provider  = "Manual"
-  #  #  version   = "1"
-  #  #  run_order = 2
-##
-  #  #  configuration = {
-  #  #    CustomData         = "checkov: #{CHECKOV.failures}, #{CHECKOV.tests}"
-  #  #    ExternalEntityLink = "#{CHECKOV.review_link}"
-  #  #  }
-  #  #}
-  #}
+  stage {
+    name = "Validate"
+    action {
+      name             = "Validate"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["source"]
+      output_artifacts = ["validate"]
+      namespace        = "VALIDATE"
+      configuration = {
+        ProjectName = aws_codebuild_project.validate.name
+      }
+    }
+  }
+  stage {
+    name = "TestCheckov"
+    action {
+      name             = "TestCheckov"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["source"]
+      output_artifacts = ["checkov"]
+      namespace        = "CHECKOV"
+      configuration = {
+        ProjectName = aws_codebuild_project.checkov_test.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "ACCOUNT"
+            value = local.account
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+    #action {
+    #  name      = "CheckovApproval"
+    #  category  = "Approval"
+    #  owner     = "AWS"
+    #  provider  = "Manual"
+    #  version   = "1"
+    #  run_order = 2
+    #
+    #  configuration = {
+    #    CustomData         = "checkov: #{CHECKOV.failures}, #{CHECKOV.tests}"
+    #    ExternalEntityLink = "#{CHECKOV.review_link}"
+    #  }
+    #}
+  }
 
   stage {
     name = "TerraformBuild"
@@ -232,7 +232,7 @@ resource "aws_codepipeline" "aws_automation" {
     #  provider  = "Manual"
     #  version   = "1"
     #  run_order = 2
-#
+    #
     #  configuration = {
     #    CustomData         = "Please review and approve the terraform plan"
     #    ExternalEntityLink = "https://#{TF.pipeline_region}.console.aws.amazon.com/codesuite/codebuild/${local.account}/projects/#{TF.build_id}/build/#{TF.build_id}%3A#{TF.build_tag}/?region=#{TF.pipeline_region}"

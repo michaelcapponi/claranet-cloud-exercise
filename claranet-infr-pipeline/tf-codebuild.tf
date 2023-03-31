@@ -126,32 +126,32 @@ resource "aws_codebuild_project" "validate" {
 }
 
 # ---------- Checkov Test CodeBuild Project -------
-#resource "aws_codebuild_project" "checkov_test" {
-#  name          = "aws-automation-checkov-test"
-#  description   = "CodeBuild project to test Terraform IaC with Checkov."
-#  build_timeout = "90"
-#  service_role  = aws_iam_role.codebuild.arn
-#  artifacts {
-#    type = "NO_ARTIFACTS"
-#  }
-#  environment {
-#    compute_type    = "BUILD_GENERAL1_MEDIUM"
-#    type            = "LINUX_CONTAINER"
-#    image           = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
-#    privileged_mode = false
-#  }
-#  logs_config {
-#    cloudwatch_logs {
-#      status     = "ENABLED"
-#      group_name = "/aws/codebuild/aws-automation-checkov-test"
-#    }
-#  }
-#  source {
-#    type      = "NO_SOURCE"
-#    buildspec = file("files/checkovTestTerraform.yaml")
-#  }
-#  source_version = "master"
-#}
+resource "aws_codebuild_project" "checkov_test" {
+  name          = "aws-automation-checkov-test"
+  description   = "CodeBuild project to test Terraform IaC with Checkov."
+  build_timeout = "90"
+  service_role  = aws_iam_role.codebuild.arn
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+  environment {
+    compute_type    = "BUILD_GENERAL1_MEDIUM"
+    type            = "LINUX_CONTAINER"
+    image           = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    privileged_mode = false
+  }
+  logs_config {
+    cloudwatch_logs {
+      status     = "ENABLED"
+      group_name = "/aws/codebuild/aws-automation-checkov-test"
+    }
+  }
+  source {
+    type      = "NO_SOURCE"
+    buildspec = file("files/checkovTestTerraform.yaml")
+  }
+  source_version = "master"
+}
 
 # ---------- Terraform Plan CodeBuild Project -------
 resource "aws_codebuild_project" "terraform_plan" {

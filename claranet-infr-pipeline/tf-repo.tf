@@ -8,11 +8,11 @@ terraform {
   }
 }
 
-#data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {}
 
-#locals {
-#  account = data.aws_caller_identity.current.account_id
-#}
+locals {
+  account = data.aws_caller_identity.current.account_id
+}
 
 provider "aws" {
   region = var.region

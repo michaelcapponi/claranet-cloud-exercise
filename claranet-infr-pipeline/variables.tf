@@ -1,9 +1,9 @@
 variable "region" {
-  type = string
+  type    = string
   default = "eu-central-1"
 }
 
 variable "github_token" {
-  type = string
+  type      = string
   sensitive = true
 }
