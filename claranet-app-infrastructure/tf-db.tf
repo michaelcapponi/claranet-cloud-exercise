@@ -4,7 +4,7 @@ data "aws_secretsmanager_random_password" "db_pwd" {
 }
 
 resource "aws_secretsmanager_secret" "db_pwd_secret" {
-  name = "doc-db-secrett"
+  name = "doc-db-secrets"
 }
 
 resource "aws_secretsmanager_secret_version" "db_pwd_secret_version" {
