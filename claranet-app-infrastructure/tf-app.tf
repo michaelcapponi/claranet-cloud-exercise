@@ -69,7 +69,7 @@ resource "aws_security_group" "lt_sg" {
 
 #I need it to check if docdb instance is ready before connecting to it and launch app
 resource "aws_iam_role" "launch_template_role" {
-  name = "launch_template_role"
+  name = "lt-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -101,18 +101,23 @@ resource "aws_iam_role_policy" "documentdb_policy" {
   })
 }
 
+resource "aws_iam_instance_profile" "lt_profile" {
+  name = "lt_profile"
+  role = "${aws_iam_role.launch_template_role.name}"
+}
+
 resource "aws_launch_template" "lt" {
   name = var.lt_name
   image_id = var.ec2_ami
   instance_type = var.ec2_type
   iam_instance_profile {
-    name = aws_iam_role.launch_template_role.name
+    name = aws_iam_instance_profile.lt_profile.name
   }
   vpc_security_group_ids = [aws_security_group.lt_sg.id]
   user_data = base64encode(templatefile("./user-data.sh", {
     region = var.region
     db_user = var.master_dba
-    db_instance = var.db_instance_id
+    db_name = var.db_instance_id
     db_pwd = aws_secretsmanager_secret_version.db_pwd_secret_version.secret_string
     db_endpoint = aws_docdb_cluster.db_cluster.endpoint
   }))

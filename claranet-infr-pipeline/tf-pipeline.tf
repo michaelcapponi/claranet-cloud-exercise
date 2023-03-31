@@ -147,9 +147,9 @@ resource "aws_codepipeline" "aws_automation" {
       output_artifacts = ["source"]
 
       configuration = {
-        Owner      = "michaelcapponi"
-        Repo       = "claranet-cloud-exercise"
-        Branch     = "main"
+        Owner      = var.owner
+        Repo       = var.repository
+        Branch     = var.branch
         OAuthToken = var.github_token
       }
     }

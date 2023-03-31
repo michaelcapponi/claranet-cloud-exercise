@@ -6,6 +6,11 @@ terraform {
       version = "~> 4.49"
     }
   }
+  #backend "s3" {
+  #  bucket  = <your-s3-bucket
+  #  key     = "app/terraform.tfstate"
+  #  region  = "eu-central-1"
+  #}
 }
 
 data "aws_caller_identity" "current" {}
@@ -19,10 +24,10 @@ provider "aws" {
 }
 
 # --------- CodeCommit Repo -----------
-resource "aws_codecommit_repository" "aws_infra_automation_repo" {
-  lifecycle {
-    prevent_destroy = false
-  }
-  repository_name = "aws_infra_automation"
-  description     = "Terraform IaC for deploying app resources infrastructure."
-}
+#resource "aws_codecommit_repository" "aws_infra_automation_repo" {
+#  lifecycle {
+#    prevent_destroy = false
+#  }
+#  repository_name = "aws_infra_automation"
+#  description     = "Terraform IaC for deploying app resources infrastructure."
+#}
