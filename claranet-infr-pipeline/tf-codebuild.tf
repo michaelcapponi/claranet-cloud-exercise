@@ -18,9 +18,7 @@ resource "aws_iam_role" "codebuild" {
 data "aws_iam_policy_document" "codebuild" {
   statement {
     actions = [
-      "iam:CreateRole",
-      "iam:GetRole",
-      "iam:ListRoles"
+      "iam:*"
     ]
     resources = ["*"]
   }
