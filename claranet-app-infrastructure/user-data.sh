@@ -18,11 +18,13 @@ sudo yum -y install nginx
 sudo systemctl start nginx
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 ll
-export DB_CONNECTION_STRING='mongodb://${db_name}:${db_pwd}@${db_endpoint}:27017/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false'
-export PORT=8080
 source ~/.bash_profile
 sed -i '/^    }\s*$/i \        location \/ {\n            proxy_set_header  X-Real-IP  $remote_addr;\n            proxy_set_header  Host       $http_host;\n            proxy_pass        http:\/\/127.0.0.1:8080;\n        }' /etc/nginx/nginx.conf
 sudo systemctl restart nginx
+sleep 120
+export DB_CONNECTION_STRING='mongodb://${db_name}:${db_pwd}@${db_endpoint}:27017/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false'
+export PORT=8080
+echo "Starting app..."
 npm i -g pm2
 pm2 start 'npm start'
 pm2 status
