@@ -14,11 +14,11 @@ terraform {
       version = "> 4.59"
     }
   }
-  backend "s3" {
-    bucket  = "tf-state-phoenix-app"
-    key     = "app/terraform.tfstate"
-    region  = "eu-central-1"
-  }
+  #backend "s3" {
+  #  bucket  = <your-s3-bucket>
+  #  key     = "app/terraform.tfstate"
+  #  region  = "eu-central-1"
+  #}
 }
 
 locals {
