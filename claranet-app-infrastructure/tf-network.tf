@@ -1,7 +1,7 @@
 /*
 * ## Description
 *
-* **Version**: 1.0
+* **Version**: 2.0
 * Terraform network resources 
 * Terraform added application (alb + asg) and db resources
 */
