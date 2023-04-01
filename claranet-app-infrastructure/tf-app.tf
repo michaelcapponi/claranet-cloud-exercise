@@ -121,7 +121,7 @@ resource "aws_launch_template" "lt" {
     db_pwd = aws_secretsmanager_secret_version.db_pwd_secret_version.secret_string
     db_endpoint = aws_docdb_cluster.db_cluster.endpoint
   }))
-  key_name = "test"
+  #key_name = "test"
 }
 
 resource "aws_autoscaling_group" "asg" {
