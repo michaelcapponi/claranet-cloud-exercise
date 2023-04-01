@@ -1,7 +1,7 @@
 /*
 * ## Description
 *
-* **Version**: 1.0
+* **Version**: 2.0
 * Terraform network resources 
 * Terraform added application (alb + asg) and db resources
 */
@@ -11,7 +11,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "> 4.49"
+      version = "> 4.59"
     }
   }
   backend "s3" {
@@ -53,17 +53,6 @@ resource "aws_subnet" "private_subnet" {
   count = 3
 
   cidr_block = "10.0.${count.index + 3}.0/24" #+3 to shift ip cidr block from public subnets 
-  vpc_id     = aws_vpc.vpc.id
-  availability_zone = local.azs[count.index]
-  tags = {
-    Name = "phoenix-private-subnet-${count.index}"
-  }
-}
-
-resource "aws_subnet" "db_subnet" {
-  count = 3
-
-  cidr_block = "10.0.${count.index + 6}.0/24" #+6 to shift ip cidr block from public subnets and application private subnets
   vpc_id     = aws_vpc.vpc.id
   availability_zone = local.azs[count.index]
   tags = {
@@ -120,14 +109,6 @@ resource "aws_route_table" "private_rt" {
   }
 }
 
-resource "aws_route_table" "db_rt" {
-  vpc_id = aws_vpc.vpc.id
-
-  tags = {
-    Name = "phoenix-db-rt"
-  }
-}
-
 resource "aws_route_table_association" "public" {
   count = 3
   subnet_id      = aws_subnet.public_subnet[count.index].id
@@ -139,13 +120,6 @@ resource "aws_route_table_association" "private" {
 
   subnet_id      = aws_subnet.private_subnet[count.index].id
   route_table_id = aws_route_table.private_rt.id
-}
-
-resource "aws_route_table_association" "db_association" {
-  count = 3
-
-  subnet_id      = aws_subnet.db_subnet[count.index].id
-  route_table_id = aws_route_table.db_rt.id
 }
 
 

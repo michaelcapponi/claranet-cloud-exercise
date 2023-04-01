@@ -97,8 +97,7 @@ variable "missing_data_behavior" {
 
 variable "sns_topic_name" {
   type = string
-  default = "breaching"
-  description = "phoenix-alarms-sns"
+  default = "phoenix-alarms-sns"
 }
 #tflint-ignore: terraform_unused_declarations
 variable "support_email" {

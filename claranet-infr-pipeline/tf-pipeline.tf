@@ -1,59 +1,3 @@
-# ----- Event Bridge permissions ------
-data "aws_iam_policy_document" "start_pipeline_trust" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type = "Service"
-      identifiers = [
-        "scheduler.amazonaws.com",
-        "events.amazonaws.com"
-      ]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "start_pipeline" {
-  statement {
-    effect  = "Allow"
-    actions = ["codepipeline:StartPipelineExecution"]
-    resources = [
-      aws_codepipeline.aws_automation.arn
-    ]
-  }
-}
-
-resource "aws_iam_role" "eventbridge_start_pipeline" {
-  name   = "phoenix-eventbridge-start-pipeline"
-  assume_role_policy = data.aws_iam_policy_document.start_pipeline_trust.json
-}
-
-resource "aws_iam_role_policy" "eventbridge_start_pipeline" {
-  name   = "StartPipeline"
-  policy = data.aws_iam_policy_document.start_pipeline.json
-  role   = aws_iam_role.eventbridge_start_pipeline.name
-}
-
-resource "aws_cloudwatch_event_rule" "aws_automation_push" {
-  name        = "aws-automation-terraform-push-master"
-  description = "Capture git push operation on aws_infra_automation CodeCommit repository."
-  event_pattern = jsonencode({
-    "source" : ["aws.codecommit"],
-    "detail-type" : ["CodeCommit Repository State Change"],
-    "resources" : [aws_codecommit_repository.aws_infra_automation_repo.arn],
-    "detail" : {
-      "event" : ["referenceCreated", "referenceUpdated"],
-      "referenceType" : ["branch"],
-      "referenceName" : ["master"]
-    }
-  })
-}
-
-resource "aws_cloudwatch_event_target" "aws_automation_pipeline" {
-  rule      = aws_cloudwatch_event_rule.aws_automation_push.name
-  target_id = "BuildPipeline"
-  arn       = aws_codepipeline.aws_automation.arn
-  role_arn  = aws_iam_role.eventbridge_start_pipeline.arn
-}
 
 # ----- Codepipeline permissions ------
 data "aws_iam_policy_document" "codepipeline_assume_role" {
@@ -203,66 +147,66 @@ resource "aws_codepipeline" "aws_automation" {
       output_artifacts = ["source"]
 
       configuration = {
-        Owner      = "michaelcapponi"
-        Repo       = "claranet-cloud-exercise"
-        Branch     = "main"
+        Owner      = var.owner
+        Repo       = var.repository
+        Branch     = var.branch
         OAuthToken = var.github_token
       }
     }
   }
-  #stage {
-  #  name = "Validate"
-  #  action {
-  #    name             = "Validate"
-  #    category         = "Build"
-  #    owner            = "AWS"
-  #    provider         = "CodeBuild"
-  #    version          = "1"
-  #    input_artifacts  = ["source"]
-  #    output_artifacts = ["validate"]
-  #    namespace        = "VALIDATE"
-  #    configuration = {
-  #      ProjectName = aws_codebuild_project.validate.name
-  #    }
-  #  }
-  #}
-  #stage {
-  #  name = "TestCheckov"
-  #  action {
-  #    name             = "TestCheckov"
-  #    category         = "Build"
-  #    owner            = "AWS"
-  #    provider         = "CodeBuild"
-  #    version          = "1"
-  #    run_order        = 1
-  #    input_artifacts  = ["source"]
-  #    output_artifacts = ["checkov"]
-  #    namespace        = "CHECKOV"
-  #    configuration = {
-  #      ProjectName = aws_codebuild_project.checkov_test.name
-  #      EnvironmentVariables = jsonencode([
-  #        {
-  #          name  = "ACCOUNT"
-  #          value = local.account
-  #          type  = "PLAINTEXT"
-  #        }
-  #      ])
-  #    }
-  #  }
-  #  #action {
-  #  #  name      = "CheckovApproval"
-  #  #  category  = "Approval"
-  #  #  owner     = "AWS"
-  #  #  provider  = "Manual"
-  #  #  version   = "1"
-  #  #  run_order = 2
-##
-  #  #  configuration = {
-  #  #    CustomData         = "checkov: #{CHECKOV.failures}, #{CHECKOV.tests}"
-  #  #    ExternalEntityLink = "#{CHECKOV.review_link}"
-  #  #  }
-  #  #}
-  #}
+  stage {
+    name = "Validate"
+    action {
+      name             = "Validate"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["source"]
+      output_artifacts = ["validate"]
+      namespace        = "VALIDATE"
+      configuration = {
+        ProjectName = aws_codebuild_project.validate.name
+      }
+    }
+  }
+  stage {
+    name = "TestCheckov"
+    action {
+      name             = "TestCheckov"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["source"]
+      output_artifacts = ["checkov"]
+      namespace        = "CHECKOV"
+      configuration = {
+        ProjectName = aws_codebuild_project.checkov_test.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "ACCOUNT"
+            value = local.account
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+    #action {
+    #  name      = "CheckovApproval"
+    #  category  = "Approval"
+    #  owner     = "AWS"
+    #  provider  = "Manual"
+    #  version   = "1"
+    #  run_order = 2
+    #
+    #  configuration = {
+    #    CustomData         = "checkov: #{CHECKOV.failures}, #{CHECKOV.tests}"
+    #    ExternalEntityLink = "#{CHECKOV.review_link}"
+    #  }
+    #}
+  }
 
   stage {
     name = "TerraformBuild"
@@ -288,7 +232,7 @@ resource "aws_codepipeline" "aws_automation" {
     #  provider  = "Manual"
     #  version   = "1"
     #  run_order = 2
-#
+    #
     #  configuration = {
     #    CustomData         = "Please review and approve the terraform plan"
     #    ExternalEntityLink = "https://#{TF.pipeline_region}.console.aws.amazon.com/codesuite/codebuild/${local.account}/projects/#{TF.build_id}/build/#{TF.build_id}%3A#{TF.build_tag}/?region=#{TF.pipeline_region}"

@@ -1,9 +1,27 @@
 variable "region" {
-  type = string
+  type    = string
   default = "eu-central-1"
 }
 
 variable "github_token" {
-  type = string
-  default = "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"
+  type      = string
+  sensitive = true
+}
+
+variable "owner" {
+  type      = string
+  sensitive = true
+  default = "michaelcapponi"
+}
+
+variable "repository" {
+  type      = string
+  sensitive = true
+  default = "claranet-cloud-exercise"
+}
+
+variable "branch" {
+  type      = string
+  sensitive = true
+  default = "main"
 }

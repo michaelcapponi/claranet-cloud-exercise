@@ -13,14 +13,13 @@ phases:
       - echo "Completed installing terraform..."
   build:
     commands:
-      - cd claranet-app-infrastructure
       - echo "Terraform apply"
       - cd "${CODEBUILD_SRC_DIR}"
       - cd claranet-app-infrastructure
       - ls -l
       - echo "terraform init"
-      #- terraform init
-      #- terraform apply -auto-approve "tfplan" -compact-warnings
+      - terraform init
+      - terraform apply -auto-approve "tfplan" -compact-warnings
       #- terraform destroy
   post_build:
     commands:
