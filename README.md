@@ -30,7 +30,7 @@ ___
 
 Contains terraform manifests to deploy AWS infrastructure and set up the application inside EC2 instance.
 
-The application is deployed whithin an EC2 instance belonging to an ASG in a private VPC subnet and behind an ALB in a public VPC Subnet.
+The application is deployed within an EC2 instance belonging to an ASG in a private VPC subnet and behind an ALB in a public VPC Subnet.
 The database is deployed as a DocumentDB instance in the private subnet and the master password is secured in a secret within secret manager.
 
 
